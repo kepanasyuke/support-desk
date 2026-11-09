@@ -14,6 +14,7 @@ import {
   PageHead,
   Score,
   Select,
+  SkeletonTable,
   Spinner,
   Stat,
   Table,
@@ -50,6 +51,7 @@ export function App() {
   const [stats, setStats] = useState<DraftStats | null>(null);
   const [generated, setGenerated] = useState<Generated | null>(null);
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
@@ -58,6 +60,7 @@ export function App() {
     setDrafts(list);
     setStats(summary);
     setBusy(false);
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -166,12 +169,14 @@ export function App() {
                   </tr>
                 ))}
               </Table>
-            ) : (
+            ) : ready ? (
               <Empty
                 art={<SuggestArt />}
                 title="Черновиков нет"
                 description="Запустите php projects/05-suggest/api/seed.php"
               />
+            ) : (
+              <SkeletonTable rows={6} cols={3} />
             )}
           </Card>
         </>

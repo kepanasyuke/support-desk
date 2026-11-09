@@ -154,6 +154,53 @@ export function Spinner() {
   return <div className="sd-spinner" role="status" aria-label="Загрузка" />;
 }
 
+const SKELETON_WIDTHS = ["26%", "18%", "14%", "12%", "16%", "14%"];
+
+export function Skeleton({ width = "100%", height = 14 }: { width?: string | number; height?: number }) {
+  return <div className="sd-skeleton" style={{ width, height }} aria-hidden="true" />;
+}
+
+export function SkeletonLines({ lines = 3 }: { lines?: number }) {
+  return (
+    <div className="sd-skeleton-lines" aria-hidden="true">
+      {Array.from({ length: lines }, (_, index) => (
+        <Skeleton key={index} width={index === lines - 1 ? "58%" : "100%"} height={12} />
+      ))}
+    </div>
+  );
+}
+
+export function SkeletonTable({ rows = 6, cols = 6 }: { rows?: number; cols?: number }) {
+  return (
+    <div className="sd-skeleton-table" aria-hidden="true">
+      {Array.from({ length: rows }, (_, row) => (
+        <div className="sd-skeleton-row" key={row}>
+          {Array.from({ length: cols }, (_, col) => (
+            <Skeleton key={col} width={SKELETON_WIDTHS[col % SKELETON_WIDTHS.length]} height={12} />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function SkeletonCards({ count = 4 }: { count?: number }) {
+  return (
+    <div className="sd-skeleton-cards" aria-hidden="true">
+      {Array.from({ length: count }, (_, index) => (
+        <div className="sd-skeleton-card" key={index}>
+          <Skeleton width="44%" height={10} />
+          <Skeleton width="66%" height={20} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function Wait({ ready, skeleton, children }: { ready: boolean; skeleton: React.ReactNode; children: React.ReactNode }) {
+  return <>{ready ? children : skeleton}</>;
+}
+
 export function Alert({ tone = "info", children }: { tone?: "info" | "danger" | "success"; children: React.ReactNode }) {
   return <div className={`sd-alert sd-alert--${tone}`}>{children}</div>;
 }

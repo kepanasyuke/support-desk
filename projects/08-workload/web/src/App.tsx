@@ -13,6 +13,7 @@ import {
   PageHead,
   Progress,
   Score,
+  SkeletonTable,
   Spinner,
   Stat,
   Table,
@@ -51,6 +52,7 @@ export function App() {
   const [selected, setSelected] = useState<Operator | null>(null);
   const [advice, setAdvice] = useState<Advice | null>(null);
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
@@ -59,6 +61,7 @@ export function App() {
     setOperators(list);
     setStats(summary);
     setBusy(false);
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -121,12 +124,14 @@ export function App() {
                   </tr>
                 ))}
               </Table>
-            ) : (
+            ) : ready ? (
               <Empty
                 art={<WorkloadArt />}
                 title="Операторов нет"
                 description="Запустите php projects/08-workload/api/seed.php"
               />
+            ) : (
+              <SkeletonTable rows={6} cols={5} />
             )}
           </Card>
           <Tip

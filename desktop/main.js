@@ -23,6 +23,7 @@ const servers = [];
 const DEFAULT_BOUNDS = { width: 1440, height: 920 };
 
 let mainWindow = null;
+let splashWindow = null;
 
 app.setName("Support Desk");
 app.disableHardwareAcceleration();
@@ -94,11 +95,12 @@ async function probeAll() {
   return Object.fromEntries(pairs);
 }
 
-async function warmUp(attempts = 30) {
+async function warmUp(attempts = 30, report = () => {}) {
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     const results = await Promise.all(MODULES.map((module) => ping(module)));
 
     console.log(`Прогрев ${attempt + 1}/${attempts}: ${results.map((ok, index) => `${MODULES[index].web}=${ok ? "ok" : "нет"}`).join(" ")}`);
+    report(results, attempt);
 
     if (results.every(Boolean)) {
       return true;
@@ -197,6 +199,8 @@ function buildMenu(window) {
       submenu: [
         { label: "Обзор", accelerator: "Ctrl+0", click: () => select(window, "overview") },
         { type: "separator" },
+        { label: "Перезапустить сервисы", accelerator: "F5", click: () => restartServices(window) },
+        { type: "separator" },
         { role: "quit", label: "Выход" },
       ],
     },
@@ -255,12 +259,79 @@ function createWindow() {
   mainWindow = window;
 
   window.loadFile(path.join(here, "renderer", "index.html"));
-  window.once("ready-to-show", () => window.show());
+  window.once("ready-to-show", () => {
+    window.show();
+    closeSplash();
+  });
   window.on("resized", () => saveBounds(window));
   window.on("moved", () => saveBounds(window));
   window.on("close", () => saveBounds(window));
 
   return window;
+}
+
+function pushSplash(state) {
+  if (splashWindow && !splashWindow.isDestroyed()) {
+    splashWindow.webContents.send("sd:splash", state);
+  }
+}
+
+function createSplash() {
+  const window = new BrowserWindow({
+    width: 460,
+    height: 320,
+    frame: false,
+    resizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    show: false,
+    backgroundColor: "#0B5CFF",
+    title: "Support Desk",
+    icon: path.join(here, "assets", "icon.ico"),
+    webPreferences: {
+      contextIsolation: true,
+      nodeIntegration: false,
+      preload: path.join(here, "splash-preload.cjs"),
+    },
+  });
+
+  splashWindow = window;
+  window.loadFile(path.join(here, "renderer", "splash.html"));
+
+  return window;
+}
+
+function closeSplash() {
+  if (splashWindow && !splashWindow.isDestroyed()) {
+    splashWindow.close();
+  }
+
+  splashWindow = null;
+}
+
+function stopServices() {
+  children.splice(0).forEach((child) => child.kill());
+  servers.splice(0).forEach((server) => server.close());
+}
+
+async function startServices() {
+  pushSplash({ progress: 0.06, text: "Проверяю порты…" });
+
+  const busy = await busyPorts();
+  console.log(busy.length === 0 ? "Порты свободны" : `Заняты порты: ${busy.join(", ")} — эти модули не поднимутся`);
+
+  const count = bootstrap();
+  console.log(`Support Desk: поднято ${count} модулей`);
+  pushSplash({ progress: 0.16, text: `Запускаю ${count} сервисов…` });
+
+  const ready = await warmUp(30, (results) => {
+    const up = results.filter(Boolean).length;
+    pushSplash({ progress: 0.16 + 0.78 * (up / MODULES.length), text: `Готовлю сервисы: ${up} из ${MODULES.length}` });
+  });
+
+  console.log(ready ? "Бэкенды готовы" : "Бэкенды не ответили вовремя, окно открываю как есть");
+
+  return ready;
 }
 
 function sameImage(previous, current) {
@@ -310,17 +381,35 @@ function shutdown() {
   servers.forEach((server) => server.close());
 }
 
-app.whenReady().then(async () => {
-  const busy = await busyPorts();
+async function restartServices(window) {
+  stopServices();
 
-  console.log(busy.length === 0 ? "Порты свободны" : `Заняты порты: ${busy.join(", ")} — эти модули не поднимутся`);
+  const ready = await startServices();
 
-  const count = bootstrap();
-  console.log(`Support Desk: поднято ${count} модулей`);
+  console.log(ready ? "Сервисы перезапущены" : "Сервисы не ответили после перезапуска");
+  window.webContents.reload();
+}
 
-  const ready = await warmUp();
-  console.log(ready ? "Бэкенды готовы" : "Бэкенды не ответили вовремя, окно открываю как есть");
+function wireSplashIpc() {
+  ipcMain.on("sd:splash-retry", async () => {
+    pushSplash({ progress: 0.02, text: "Перезапускаю сервисы…", retry: false });
+    stopServices();
 
+    const ready = await startServices();
+
+    if (!ready) {
+      pushSplash({ progress: 0.96, text: "Сервисы не ответили. Проверьте журнал и повторите.", retry: true });
+      return;
+    }
+
+    pushSplash({ progress: 1, text: "Открываю окно…" });
+    openMain();
+  });
+
+  ipcMain.on("sd:splash-close", () => app.quit());
+}
+
+function openMain() {
   registerHealthChannel();
 
   const window = createWindow();
@@ -349,6 +438,28 @@ app.whenReady().then(async () => {
       .then((names) => console.log(`Скриншоты: ${names.join(", ")}`))
       .catch((error) => console.error("Скриншоты не сделаны:", error.message));
   });
+
+  return window;
+}
+
+app.whenReady().then(async () => {
+  const shots = process.env.SD_SHOTS === "1";
+
+  if (!shots) {
+    createSplash();
+  }
+
+  wireSplashIpc();
+
+  const ready = await startServices();
+
+  if (!ready && !shots) {
+    pushSplash({ progress: 0.96, text: "Сервисы не ответили. Можно повторить попытку.", retry: true });
+    return;
+  }
+
+  pushSplash({ progress: 1, text: "Открываю окно…" });
+  openMain();
 });
 
 app.on("window-all-closed", () => {

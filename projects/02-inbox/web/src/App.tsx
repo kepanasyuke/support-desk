@@ -12,6 +12,7 @@ import {
   PageHead,
   Score,
   Select,
+  SkeletonTable,
   Spinner,
   Stat,
   Table,
@@ -62,6 +63,7 @@ export function App() {
   const [selected, setSelected] = useState<Message | null>(null);
   const [intent, setIntent] = useState<Intent | null>(null);
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
@@ -70,6 +72,7 @@ export function App() {
     setMessages(list);
     setStats(summary);
     setBusy(false);
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -143,12 +146,14 @@ export function App() {
                   </tr>
                 ))}
               </Table>
-            ) : (
+            ) : ready ? (
               <Empty
                 art={<InboxArt />}
                 title="Сообщений нет"
                 description="Запустите php projects/02-inbox/api/seed.php"
               />
+            ) : (
+              <SkeletonTable rows={6} cols={4} />
             )}
           </Card>
           <Tip

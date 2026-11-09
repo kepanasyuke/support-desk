@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:"
+    />
+    <title>Support Desk</title>
+    <link rel="stylesheet" href="../../design/tokens.css" />
+    <link rel="stylesheet" href="splash.css" />
+  </head>
+  <body>
+    <main class="splash">
+      <div class="splash__mark">
+        <svg width="44" height="44" viewBox="0 0 1024 1024" aria-hidden="true" style="display: block">
+          <mask id="splash-logo-cut">
+            <rect width="1024" height="1024" fill="#ffffff" />
+            <path
+              fill="none"
+              stroke="#000000"
+              stroke-width="84"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M390 476L472 558L648 364"
+            />
+          </mask>
+          <path
+            fill="currentColor"
+            mask="url(#splash-logo-cut)"
+            d="M342 232H682A150 150 0 0 1 832 382V542A150 150 0 0 1 682 692H500L342 832V692H342A150 150 0 0 1 192 542V382A150 150 0 0 1 342 232Z"
+          />
+        </svg>
+      </div>
+
+      <h1 class="splash__title">Support Desk</h1>
+      <p class="splash__subtitle">восемь модулей клиентской поддержки</p>
+
+      <div class="splash__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="track">
+        <div class="splash__fill" id="fill"></div>
+      </div>
+
+      <p class="splash__status" id="status">Готовлю рабочее пространство…</p>
+
+      <div class="splash__actions" id="actions" hidden>
+        <button class="splash__button" id="retry" type="button">Повторить</button>
+        <button class="splash__button splash__button--quiet" id="close" type="button">Закрыть</button>
+      </div>
+    </main>
+    <script src="splash.js"></script>
+  </body>
+</html>

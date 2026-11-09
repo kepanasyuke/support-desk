@@ -1,0 +1,99 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  font-family: var(--sd-font-sans);
+  color: #ffffff;
+  background: var(--sd-splash-bg, var(--sd-primary));
+  overflow: hidden;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.splash {
+  width: 100%;
+  padding: 28px 32px 24px;
+  text-align: center;
+}
+
+.splash__mark {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.splash__title {
+  margin: 0;
+  font-size: var(--sd-fs-18);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.splash__subtitle {
+  margin: 4px 0 22px;
+  font-size: var(--sd-fs-13);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.splash__track {
+  height: 4px;
+  border-radius: var(--sd-radius-pill);
+  background: rgba(255, 255, 255, 0.22);
+  overflow: hidden;
+}
+
+.splash__fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: #ffffff;
+  transition: width 0.25s ease;
+}
+
+.splash__status {
+  margin: 14px 0 0;
+  font-size: var(--sd-fs-13);
+  color: rgba(255, 255, 255, 0.82);
+  min-height: 18px;
+}
+
+.splash__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+  -webkit-app-region: no-drag;
+}
+
+.splash__button {
+  height: 32px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--sd-radius-md);
+  background: #ffffff;
+  color: var(--sd-primary);
+  font: inherit;
+  font-size: var(--sd-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.splash__button--quiet {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.splash__button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}

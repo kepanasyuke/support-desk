@@ -47,13 +47,46 @@ function markActive(id) {
   });
 }
 
+function skeletonBlock(width, height) {
+  const node = document.createElement("div");
+
+  node.className = "sd-skeleton";
+  node.style.width = `${width}px`;
+  node.style.height = `${height}px`;
+
+  return node;
+}
+
+function skeletonRow() {
+  const row = document.createElement("div");
+
+  row.className = "sd-skeleton-row";
+  row.append(skeletonBlock(240, 12), skeletonBlock(120, 12), skeletonBlock(88, 12));
+
+  return row;
+}
+
+function buildWait() {
+  const wait = document.getElementById("frame-wait");
+  const head = document.createElement("div");
+  const rows = document.createElement("div");
+
+  head.className = "frame-wait__head";
+  head.append(skeletonBlock(260, 24), skeletonBlock(340, 13));
+  rows.className = "frame-wait__rows";
+  rows.append(...Array.from({ length: 6 }, skeletonRow));
+  wait.append(head, rows);
+}
+
 function selectModule(id) {
   const module = MODULES().find((item) => item.id === id);
 
   markActive(id);
   document.getElementById("overview").hidden = Boolean(module);
   document.getElementById("frame").hidden = !module;
+  document.getElementById("frame-wait").hidden = !module;
   document.getElementById("module-title").textContent = module ? module.title : "Обзор";
+  document.title = module ? `${module.title} — Support Desk` : "Support Desk";
   document.getElementById("module-subtitle").textContent = module
     ? module.subtitle
     : "Восемь модулей клиентской поддержки в одном окне";
@@ -141,6 +174,10 @@ async function start() {
 
   buildSidebar();
   buildOverview();
+  buildWait();
+  document.getElementById("frame").addEventListener("load", () => {
+    document.getElementById("frame-wait").hidden = true;
+  });
   selectModule("overview");
   await probeAll();
 }

@@ -81,4 +81,10 @@
   --sd-tint-accent: rgba(255, 107, 44, 0.08);
   --sd-dot: rgba(15, 30, 53, 0.08);
   --sd-dot-step: 18px;
+
+  --sd-splash-bg: var(--sd-primary);
+  --sd-skeleton-bg: #e9edf3;
+  --sd-skeleton-shine: rgba(255, 255, 255, 0.72);
+  --sd-skeleton-radius: var(--sd-radius-sm);
+  --sd-wait-min: 120ms;
 }

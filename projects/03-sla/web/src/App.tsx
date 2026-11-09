@@ -13,6 +13,7 @@ import {
   Progress,
   Score,
   Select,
+  SkeletonTable,
   Spinner,
   Stat,
   Table,
@@ -78,6 +79,7 @@ export function App() {
   const [selected, setSelected] = useState<SlaItem | null>(null);
   const [risk, setRisk] = useState<Risk | null>(null);
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
@@ -86,6 +88,7 @@ export function App() {
     setItems(list);
     setStats(summary);
     setBusy(false);
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -164,12 +167,14 @@ export function App() {
                   </tr>
                 ))}
               </Table>
-            ) : (
+            ) : ready ? (
               <Empty
                 art={<SlaArt />}
                 title="Записей нет"
                 description="Запустите php projects/03-sla/api/seed.php"
               />
+            ) : (
+              <SkeletonTable rows={6} cols={5} />
             )}
           </Card>
           <Tip

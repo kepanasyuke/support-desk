@@ -13,6 +13,7 @@ import {
   PageHead,
   Score,
   Select,
+  SkeletonTable,
   Spinner,
   Stat,
   Table,
@@ -71,6 +72,7 @@ export function App() {
   const [suggest, setSuggest] = useState<Suggest | null>(null);
   const [tone, setTone] = useState("friendly");
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
@@ -79,6 +81,7 @@ export function App() {
     setTickets(list);
     setStats(summary);
     setBusy(false);
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -150,12 +153,14 @@ export function App() {
                   </tr>
                 ))}
               </Table>
-            ) : (
+            ) : ready ? (
               <Empty
                 art={<HelpdeskArt />}
                 title="Обращений нет"
                 description="Запустите php projects/01-helpdesk/api/seed.php"
               />
+            ) : (
+              <SkeletonTable rows={6} cols={6} />
             )}
           </Card>
           <Tip

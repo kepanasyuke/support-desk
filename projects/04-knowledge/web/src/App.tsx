@@ -12,6 +12,7 @@ import {
   Input,
   PageHead,
   Score,
+  SkeletonTable,
   Spinner,
   Stat,
   Table,
@@ -40,6 +41,7 @@ export function App() {
   const [result, setResult] = useState<SearchResult | null>(null);
   const [selected, setSelected] = useState<Article | null>(null);
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
@@ -48,6 +50,7 @@ export function App() {
     setArticles(list);
     setStats(summary);
     setBusy(false);
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -101,12 +104,14 @@ export function App() {
                   </tr>
                 ))}
               </Table>
-            ) : (
+            ) : ready ? (
               <Empty
                 art={<KnowledgeArt />}
                 title="Статей нет"
                 description="Запустите php projects/04-knowledge/api/seed.php"
               />
+            ) : (
+              <SkeletonTable rows={6} cols={4} />
             )}
           </Card>
           <Tip
