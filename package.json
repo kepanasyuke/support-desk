@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "lint:php": "phpcs",
+    "lint:php": "php vendor/squizlabs/php_codesniffer/bin/phpcs --standard=shared/lint/phpcs/SD/ruleset.xml --extensions=php --ignore=vendor,runtime,node_modules,dist,assets shared/php projects",
     "build": "node scripts/build-all.mjs",
     "desktop": "electron desktop/main.js",
     "shots": "node scripts/shots.mjs",

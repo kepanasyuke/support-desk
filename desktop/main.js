@@ -1,6 +1,7 @@
-import { app, BrowserWindow, Menu, dialog, shell } from "electron";
+import { app, BrowserWindow, Menu, dialog, ipcMain, shell } from "electron";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
+import http from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { startStatic } from "./server.js";
@@ -24,6 +25,9 @@ let mainWindow = null;
 
 app.setName("Support Desk");
 app.disableHardwareAcceleration();
+app.commandLine.appendSwitch("disable-renderer-backgrounding");
+app.commandLine.appendSwitch("disable-backgrounding-occluded-windows");
+app.commandLine.appendSwitch("disable-background-timer-throttling");
 
 function phpPath() {
   return PHP_CANDIDATES.find((candidate) => candidate === "php" || fs.existsSync(candidate));
@@ -61,6 +65,51 @@ function bootstrap() {
   MODULES.forEach(startWeb);
 
   return MODULES.length;
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function ping(module, timeout = 1500) {
+  return new Promise((resolve) => {
+    const request = http.get({ host: "127.0.0.1", port: module.web, path: module.health, timeout }, (response) => {
+      response.resume();
+      resolve(response.statusCode >= 200 && response.statusCode < 400);
+    });
+
+    request.on("error", () => resolve(false));
+    request.on("timeout", () => {
+      request.destroy();
+      resolve(false);
+    });
+  });
+}
+
+async function probeAll() {
+  const pairs = await Promise.all(MODULES.map(async (module) => [module.id, (await ping(module)) ? "up" : "down"]));
+
+  return Object.fromEntries(pairs);
+}
+
+async function warmUp(attempts = 30) {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const results = await Promise.all(MODULES.map((module) => ping(module)));
+
+    console.log(`Прогрев ${attempt + 1}/${attempts}: ${results.map((ok, index) => `${MODULES[index].web}=${ok ? "ok" : "нет"}`).join(" ")}`);
+
+    if (results.every(Boolean)) {
+      return true;
+    }
+
+    await wait(300);
+  }
+
+  return false;
+}
+
+function registerHealthChannel() {
+  ipcMain.handle("sd:health", () => probeAll());
 }
 
 function stateFile() {
@@ -183,29 +232,44 @@ function createWindow() {
   return window;
 }
 
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+function sameImage(previous, current) {
+  return Boolean(previous) && previous.equals(current);
 }
 
-async function shot(window, name) {
-  const image = await window.webContents.capturePage();
-  fs.writeFileSync(path.join(shotsDir, `${name}.png`), image.toPNG());
+async function shot(window, name, previous) {
+  let buffer = (await window.webContents.capturePage()).toPNG();
 
-  return name;
+  for (let attempt = 0; attempt < 4 && sameImage(previous, buffer); attempt += 1) {
+    await wait(1200);
+    buffer = (await window.webContents.capturePage()).toPNG();
+  }
+
+  fs.writeFileSync(path.join(shotsDir, `${name}.png`), buffer);
+
+  return buffer;
 }
 
 async function captureAll(window) {
   fs.mkdirSync(shotsDir, { recursive: true });
+  window.show();
+  window.setAlwaysOnTop(true);
+  window.moveTop();
   await wait(3000);
   await select(window, "overview");
-  await wait(1200);
-  const taken = [await shot(window, "00-overview")];
+  await wait(1500);
+  const taken = ["00-overview"];
+  let previous = await shot(window, "00-overview", null);
 
   for (const module of MODULES) {
+    const name = `${module.id}-${module.title.toLowerCase()}`;
+
     await select(window, module.id);
-    await wait(4500);
-    taken.push(await shot(window, `${module.id}-${module.title.toLowerCase()}`));
+    await wait(2500);
+    previous = await shot(window, name, previous);
+    taken.push(name);
   }
+
+  window.setAlwaysOnTop(false);
 
   return taken;
 }
@@ -215,9 +279,14 @@ function shutdown() {
   servers.forEach((server) => server.close());
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   const count = bootstrap();
   console.log(`Support Desk: поднято ${count} модулей`);
+
+  const ready = await warmUp();
+  console.log(ready ? "Бэкенды готовы" : "Бэкенды не ответили вовремя, окно открываю как есть");
+
+  registerHealthChannel();
 
   const window = createWindow();
   buildMenu(window);

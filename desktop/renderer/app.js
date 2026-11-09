@@ -89,18 +89,28 @@ function renderHealth() {
   });
 }
 
-async function probe(module) {
+async function pingModule(module) {
   try {
     const response = await fetch(`http://127.0.0.1:${module.web}${module.health}`, { cache: "no-store" });
 
-    state.health[module.id] = response.ok ? "up" : "down";
+    return response.ok;
   } catch (error) {
-    state.health[module.id] = "down";
+    return false;
   }
 }
 
+async function collectHealth() {
+  if (window.SD_HEALTH) {
+    return window.SD_HEALTH();
+  }
+
+  const pairs = await Promise.all(MODULES().map(async (module) => [module.id, (await pingModule(module)) ? "up" : "down"]));
+
+  return Object.fromEntries(pairs);
+}
+
 async function probeAll() {
-  await Promise.all(MODULES().map(probe));
+  state.health = (await collectHealth()) || {};
   renderHealth();
 
   const up = MODULES().filter((module) => state.health[module.id] === "up").length;

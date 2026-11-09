@@ -39,7 +39,7 @@
     }
   },
   "scripts": {
-    "lint": "phpcs --standard=shared/lint/phpcs/SD/ruleset.xml",
-    "lint:fix": "phpcbf --standard=shared/lint/phpcs/SD/ruleset.xml"
+    "lint": "phpcs --standard=shared/lint/phpcs/SD/ruleset.xml --extensions=php --ignore=vendor,runtime,node_modules,dist,assets shared/php projects",
+    "lint:fix": "phpcbf --standard=shared/lint/phpcs/SD/ruleset.xml --extensions=php --ignore=vendor,runtime,node_modules,dist,assets shared/php projects"
   }
 }
