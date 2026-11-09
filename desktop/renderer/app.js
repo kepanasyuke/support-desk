@@ -82,6 +82,7 @@ function selectModule(id) {
   const module = MODULES().find((item) => item.id === id);
 
   markActive(id);
+  document.querySelector(".workspace").classList.toggle("workspace--module", Boolean(module));
   document.getElementById("overview").hidden = Boolean(module);
   document.getElementById("frame").hidden = !module;
   document.getElementById("frame-wait").hidden = !module;

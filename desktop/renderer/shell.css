@@ -104,6 +104,22 @@ body {
   padding: var(--sd-space-6) var(--sd-space-8) var(--sd-space-8);
 }
 
+.workspace--module {
+  padding: 0;
+  overflow: hidden;
+}
+
+.workspace--module .frame {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.workspace--module .frame-wait {
+  border: 0;
+  border-radius: 0;
+}
+
 .frame {
   flex: 1;
   width: 100%;
@@ -150,6 +166,29 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--sd-space-6);
+}
+
+.overview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sd-space-8);
+}
+
+.overview-head__text {
+  max-width: 620px;
+}
+
+.overview-head__hero {
+  flex: 0 0 auto;
+  width: 360px;
+  height: auto;
+}
+
+@media (max-width: 1280px) {
+  .overview-head__hero {
+    width: 280px;
+  }
 }
 
 .overview-title {
