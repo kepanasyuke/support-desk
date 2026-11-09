@@ -5,6 +5,9 @@ vendor/
 # Собранные артефакты Electron
 desktop/out/
 
+# Локальные скриншоты из SD_SHOTS=1
+screenshots/
+
 # Базы и логи выполнения
 projects/*/api/runtime/
 *.log

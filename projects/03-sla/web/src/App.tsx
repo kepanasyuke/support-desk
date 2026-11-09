@@ -19,6 +19,8 @@ import {
 } from "@sd/ui";
 import { api, type Risk, type SlaItem, type SlaStats } from "./api";
 
+const EMBEDDED = new URLSearchParams(window.location.search).get("embed") === "1";
+
 const NAV = [
   { id: "queue", label: "Очередь SLA" },
   { id: "stats", label: "Сводка" },
@@ -111,6 +113,7 @@ export function App() {
 
   return (
     <AppShell
+      embedded={EMBEDDED}
       brand="SLA"
       subtitle="Контроль сроков ответа"
       nav={NAV}

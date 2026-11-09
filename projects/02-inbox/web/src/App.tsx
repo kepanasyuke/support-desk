@@ -18,6 +18,8 @@ import {
 } from "@sd/ui";
 import { api, type InboxStats, type Intent, type Message } from "./api";
 
+const EMBEDDED = new URLSearchParams(window.location.search).get("embed") === "1";
+
 const NAV = [
   { id: "inbox", label: "Входящие" },
   { id: "stats", label: "Аналитика" },
@@ -92,6 +94,7 @@ export function App() {
 
   return (
     <AppShell
+      embedded={EMBEDDED}
       brand="Inbox"
       subtitle="Все каналы в одном окне"
       nav={NAV}

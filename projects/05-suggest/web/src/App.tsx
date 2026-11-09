@@ -21,6 +21,8 @@ import {
 } from "@sd/ui";
 import { api, type Draft, type DraftStats, type Generated } from "./api";
 
+const EMBEDDED = new URLSearchParams(window.location.search).get("embed") === "1";
+
 const NAV = [
   { id: "compose", label: "Генератор" },
   { id: "drafts", label: "Черновики" },
@@ -77,6 +79,7 @@ export function App() {
 
   return (
     <AppShell
+      embedded={EMBEDDED}
       brand="Suggest"
       subtitle="Черновики ответов"
       nav={NAV}

@@ -13,6 +13,7 @@
     "lint:php": "phpcs",
     "build": "node scripts/build-all.mjs",
     "desktop": "electron desktop/main.js",
+    "shots": "node scripts/shots.mjs",
     "dev:helpdesk": "npm run dev --workspace sd-helpdesk-web"
   },
   "devDependencies": {
@@ -22,6 +23,7 @@
     "@typescript-eslint/parser": "^8.18.0",
     "electron": "^45.2.3",
     "eslint": "^9.17.0",
+    "playwright-core": "^1.65.0",
     "typescript": "^5.7.2"
   }
 }

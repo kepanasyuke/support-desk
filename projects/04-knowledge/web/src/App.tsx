@@ -18,6 +18,8 @@ import {
 } from "@sd/ui";
 import { api, type Article, type KbStats, type SearchResult } from "./api";
 
+const EMBEDDED = new URLSearchParams(window.location.search).get("embed") === "1";
+
 const NAV = [
   { id: "articles", label: "Статьи" },
   { id: "search", label: "AI-поиск" },
@@ -62,6 +64,7 @@ export function App() {
 
   return (
     <AppShell
+      embedded={EMBEDDED}
       brand="Knowledge"
       subtitle="База знаний поддержки"
       nav={NAV}

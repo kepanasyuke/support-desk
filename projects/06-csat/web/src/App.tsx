@@ -18,6 +18,8 @@ import {
 } from "@sd/ui";
 import { api, type CsatStats, type Sentiment, type Survey } from "./api";
 
+const EMBEDDED = new URLSearchParams(window.location.search).get("embed") === "1";
+
 const NAV = [
   { id: "dashboard", label: "Дашборд" },
   { id: "reviews", label: "Отзывы" },
@@ -68,6 +70,7 @@ export function App() {
 
   return (
     <AppShell
+      embedded={EMBEDDED}
       brand="CSAT"
       subtitle="Удовлетворённость клиентов"
       nav={NAV}

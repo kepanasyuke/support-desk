@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell } from "electron";
+import { app, BrowserWindow, Menu, dialog, shell } from "electron";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
@@ -18,8 +18,12 @@ const PHP_CANDIDATES = [
 
 const children = [];
 const servers = [];
+const DEFAULT_BOUNDS = { width: 1440, height: 920 };
 
 let mainWindow = null;
+
+app.setName("Support Desk");
+app.disableHardwareAcceleration();
 
 function phpPath() {
   return PHP_CANDIDATES.find((candidate) => candidate === "php" || fs.existsSync(candidate));
@@ -34,8 +38,7 @@ function distDir(module) {
 }
 
 function startApi(module) {
-  const binary = phpPath();
-  const child = spawn(binary, ["-S", `127.0.0.1:${module.api}`, "-t", path.dirname(apiEntry(module)), apiEntry(module)], {
+  const child = spawn(phpPath(), ["-S", `127.0.0.1:${module.api}`, "-t", path.dirname(apiEntry(module)), apiEntry(module)], {
     cwd: root,
     windowsHide: true,
     stdio: "ignore",
@@ -60,16 +63,106 @@ function bootstrap() {
   return MODULES.length;
 }
 
+function stateFile() {
+  return path.join(app.getPath("userData"), "window-state.json");
+}
+
+function loadBounds() {
+  const raw = fs.existsSync(stateFile()) ? fs.readFileSync(stateFile(), "utf-8") : "{}";
+  const saved = JSON.parse(raw);
+
+  return { ...DEFAULT_BOUNDS, ...saved };
+}
+
+function saveBounds(window) {
+  if (window.isMinimized() || window.isFullScreen()) {
+    return;
+  }
+
+  const bounds = window.getBounds();
+
+  fs.writeFileSync(stateFile(), JSON.stringify(bounds));
+}
+
+function select(window, id) {
+  const script = `(function () {
+    var button = document.querySelector('.sd-nav-item[data-id="${id}"]');
+    if (button) { button.click(); return true; }
+    return false;
+  })()`;
+
+  return window.webContents.executeJavaScript(script, true);
+}
+
+function showAbout(window) {
+  dialog.showMessageBox(window, {
+    type: "info",
+    title: "О программе",
+    message: "Support Desk",
+    detail: `Восемь модулей клиентской поддержки.\nPHP 8.3 / Yii2 REST + React 18.\nElectron ${process.versions.electron}, Chromium ${process.versions.chrome}.`,
+    buttons: ["Закрыть"],
+  });
+}
+
+function buildMenu(window) {
+  const moduleItems = MODULES.map((module, index) => ({
+    label: `${module.title}   Ctrl+${index + 1}`,
+    accelerator: `Ctrl+${index + 1}`,
+    click: () => select(window, module.id),
+  }));
+
+  const template = [
+    {
+      label: "Файл",
+      submenu: [
+        { label: "Обзор", accelerator: "Ctrl+0", click: () => select(window, "overview") },
+        { type: "separator" },
+        { role: "quit", label: "Выход" },
+      ],
+    },
+    { label: "Модули", submenu: moduleItems },
+    {
+      label: "Вид",
+      submenu: [
+        { role: "reload", label: "Перезагрузить" },
+        { role: "forceReload", label: "Перезагрузить без кэша" },
+        { type: "separator" },
+        { role: "resetZoom", label: "Обычный масштаб" },
+        { role: "zoomIn", label: "Крупнее" },
+        { role: "zoomOut", label: "Мельче" },
+        { type: "separator" },
+        { role: "togglefullscreen", label: "Во весь экран" },
+        { role: "toggleDevTools", label: "Инструменты разработчика" },
+      ],
+    },
+    {
+      label: "Справка",
+      submenu: [
+        { label: "О программе", click: () => showAbout(window) },
+        {
+          label: "Репозиторий на GitHub",
+          click: () => shell.openExternal("https://github.com/kepanasyuke/support-desk"),
+        },
+      ],
+    },
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
 function createWindow() {
+  const bounds = loadBounds();
   const window = new BrowserWindow({
-    width: 1440,
-    height: 920,
+    width: bounds.width,
+    height: bounds.height,
+    x: bounds.x,
+    y: bounds.y,
     minWidth: 1100,
     minHeight: 720,
-    show:false,
+    show: false,
     backgroundColor: "#f5f7fa",
     title: "Support Desk",
-    autoHideMenuBar: true,
+    icon: path.join(here, "assets", "icon.ico"),
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -83,6 +176,9 @@ function createWindow() {
 
   window.loadFile(path.join(here, "renderer", "index.html"));
   window.once("ready-to-show", () => window.show());
+  window.on("resized", () => saveBounds(window));
+  window.on("moved", () => saveBounds(window));
+  window.on("close", () => saveBounds(window));
 
   return window;
 }
@@ -98,21 +194,11 @@ async function shot(window, name) {
   return name;
 }
 
-async function select(window, id) {
-  const script = `(function () {
-    var button = document.querySelector('.sd-nav-item[data-id="${id}"]');
-    if (button) { button.click(); return true; }
-    return false;
-  })()`;
-
-  return window.webContents.executeJavaScript(script, true);
-}
-
 async function captureAll(window) {
   fs.mkdirSync(shotsDir, { recursive: true });
-  await wait(2500);
+  await wait(3000);
   await select(window, "overview");
-  await wait(900);
+  await wait(1200);
   const taken = [await shot(window, "00-overview")];
 
   for (const module of MODULES) {
@@ -129,13 +215,12 @@ function shutdown() {
   servers.forEach((server) => server.close());
 }
 
-app.disableHardwareAcceleration();
-
 app.whenReady().then(() => {
   const count = bootstrap();
   console.log(`Support Desk: поднято ${count} модулей`);
 
   const window = createWindow();
+  buildMenu(window);
 
   window.webContents.on("did-fail-load", (event, code, description) => {
     console.error(`Страница не загрузилась: ${code} ${description}`);
@@ -145,31 +230,20 @@ app.whenReady().then(() => {
     console.error(`Рендерер упал: ${details.reason}`);
   });
 
-  app.on("child-process-gone", (event, details) => {
-    console.error(`Дочерний процесс завершился: ${details.type} ${details.reason}`);
-  });
-
-  window.webContents.on("console-message", (event, level, message) => {
-    console.log(`[renderer:${level}] ${message}`);
-  });
-
-  window.webContents.on("did-finish-load", () => {
-    console.log("Страница загружена");
-
-    window.webContents
-      .executeJavaScript("document.querySelectorAll('.sd-nav-item').length")
-      .then((items) => console.log(`Навигация: ${items} пунктов`))
-      .catch((error) => console.error("Рендерер не ответил:", error.message));
-
-    captureAll(window)
-      .then((names) => console.log(`Скриншоты: ${names.join(", ")}`))
-      .catch((error) => console.error("Скриншоты не сделаны:", error.message));
-  });
-
   window.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
 
     return { action: "deny" };
+  });
+
+  window.webContents.on("did-finish-load", () => {
+    if (process.env.SD_SHOTS !== "1") {
+      return;
+    }
+
+    captureAll(window)
+      .then((names) => console.log(`Скриншоты: ${names.join(", ")}`))
+      .catch((error) => console.error("Скриншоты не сделаны:", error.message));
   });
 });
 

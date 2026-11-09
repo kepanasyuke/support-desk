@@ -208,6 +208,7 @@ export function AppShell({
   current,
   onNavigate,
   topbarRight,
+  embedded = false,
   children,
 }: {
   brand: string;
@@ -216,37 +217,54 @@ export function AppShell({
   current: string;
   onNavigate: (id: string) => void;
   topbarRight?: React.ReactNode;
+  embedded?: boolean;
   children: React.ReactNode;
 }) {
   const mark = brand.slice(0, 1).toUpperCase();
+  const shellClass = embedded ? "sd-app sd-app--embedded" : "sd-app";
+
   return (
-    <div className="sd-app">
-      <aside className="sd-sidebar">
-        <div className="sd-brand">
-          <div className="sd-brand__mark">{mark}</div>
-          <div>
-            <div className="sd-brand__name">{brand}</div>
-            <div className="sd-brand__sub">{subtitle}</div>
+    <div className={shellClass}>
+      {embedded ? null : (
+        <aside className="sd-sidebar">
+          <div className="sd-brand">
+            <div className="sd-brand__mark">{mark}</div>
+            <div>
+              <div className="sd-brand__name">{brand}</div>
+              <div className="sd-brand__sub">{subtitle}</div>
+            </div>
           </div>
-        </div>
-        <nav className="sd-stack" style={{ gap: 2 }}>
-          {nav.map((item) => (
-            <button
-              key={item.id}
-              className="sd-nav-item"
-              aria-current={item.id === current ? "page" : undefined}
-              onClick={() => onNavigate(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </nav>
-      </aside>
+          <nav className="sd-stack" style={{ gap: 2 }}>
+            {nav.map((item) => (
+              <button
+                key={item.id}
+                className="sd-nav-item"
+                aria-current={item.id === current ? "page" : undefined}
+                onClick={() => onNavigate(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        </aside>
+      )}
       <div className="sd-main">
-        <header className="sd-topbar">
-          <span className="sd-muted" style={{ fontSize: 13 }}>Рабочее пространство</span>
-          <div className="sd-row">{topbarRight}</div>
-        </header>
+        {embedded ? (
+          <header className="sd-topbar sd-topbar--embedded">
+            <span className="sd-subtle" style={{ fontSize: 12 }}>{subtitle}</span>
+            <div className="sd-row">{topbarRight}</div>
+          </header>
+        ) : (
+          <header className="sd-topbar">
+            <div className="sd-row" style={{ gap: 12 }}>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 14, letterSpacing: "-0.01em" }}>{brand}</div>
+                <div className="sd-subtle" style={{ fontSize: 12 }}>{subtitle}</div>
+              </div>
+            </div>
+            <div className="sd-row">{topbarRight}</div>
+          </header>
+        )}
         <main className="sd-content">{children}</main>
       </div>
     </div>

@@ -20,6 +20,8 @@ import {
 } from "@sd/ui";
 import { api, type Stats, type Suggest, type Ticket, type Triage } from "./api";
 
+const EMBEDDED = new URLSearchParams(window.location.search).get("embed") === "1";
+
 const NAV = [
   { id: "tickets", label: "Обращения" },
   { id: "stats", label: "Аналитика" },
@@ -108,6 +110,7 @@ export function App() {
 
   return (
     <AppShell
+      embedded={EMBEDDED}
       brand="Helpdesk"
       subtitle="Обращения клиентов"
       nav={NAV}

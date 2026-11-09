@@ -70,6 +70,13 @@ function reply(data, response, resolved, rootDir) {
     return;
   }
 
+  const extension = path.extname(resolved);
+
+  if (extension) {
+    fail(response, 404, "Файл не найден");
+    return;
+  }
+
   fs.readFile(path.join(rootDir, "index.html"), (error, fallback) => send(response, error ? 404 : 200, "text/html; charset=utf-8", fallback));
 }
 

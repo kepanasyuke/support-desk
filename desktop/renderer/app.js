@@ -1,10 +1,23 @@
-const MODULES = window.SD_MODULES || [];
+const state = { current: "overview", modules: [], health: {} };
+
+const MODULES = () => state.modules;
+
+function icon(name, size) {
+  return window.SD_ICON ? window.SD_ICON(name, size) : "";
+}
+
+function healthDot(module) {
+  const status = state.health[module.id] || "unknown";
+
+  return `<span class="health health--${status}" title="бэкенд: ${status}"></span>`;
+}
 
 function navItem(module) {
   const button = document.createElement("button");
+
   button.className = "sd-nav-item";
   button.dataset.id = module.id;
-  button.innerHTML = `<span class="nav-dot"></span><span>${module.title}</span><span class="nav-id">${module.id}</span>`;
+  button.innerHTML = `${icon(module.icon)}<span class="nav-label">${module.title}</span>${healthDot(module)}`;
   button.addEventListener("click", () => window.selectModule(module.id));
 
   return button;
@@ -12,12 +25,16 @@ function navItem(module) {
 
 function card(module) {
   const article = document.createElement("button");
+
   article.className = "module-card";
   article.innerHTML = `
-    <span class="module-card__id">${module.id}</span>
+    <span class="module-card__head">
+      <span class="module-card__icon">${icon(module.icon, 20)}</span>
+      <span class="module-card__id">${module.id}</span>
+    </span>
     <span class="module-card__title">${module.title}</span>
     <span class="module-card__subtitle">${module.subtitle}</span>
-    <span class="module-card__action">Открыть раздел →</span>
+    <span class="module-card__action">Открыть раздел ${icon("arrow", 14)}</span>
   `;
   article.addEventListener("click", () => window.selectModule(module.id));
 
@@ -31,7 +48,7 @@ function markActive(id) {
 }
 
 function selectModule(id) {
-  const module = MODULES.find((item) => item.id === id);
+  const module = MODULES().find((item) => item.id === id);
 
   markActive(id);
   document.getElementById("overview").hidden = Boolean(module);
@@ -42,7 +59,7 @@ function selectModule(id) {
     : "Восемь модулей клиентской поддержки в одном окне";
 
   if (module) {
-    document.getElementById("frame").src = `http://127.0.0.1:${module.web}/`;
+    document.getElementById("frame").src = `http://127.0.0.1:${module.web}/?embed=1`;
   }
 }
 
@@ -52,17 +69,75 @@ function buildSidebar() {
 
   overview.className = "sd-nav-item";
   overview.dataset.id = "overview";
-  overview.innerHTML = '<span class="nav-dot"></span><span>Обзор</span><span class="nav-id">все</span>';
+  overview.innerHTML = `${icon("overview")}<span class="nav-label">Обзор</span>`;
   overview.addEventListener("click", () => window.selectModule("overview"));
-  nav.append(overview, ...MODULES.map(navItem));
+  nav.append(overview, ...MODULES().map(navItem));
 }
 
 function buildOverview() {
-  document.getElementById("overview-grid").append(...MODULES.map(card));
+  document.getElementById("overview-grid").append(...MODULES().map(card));
+}
+
+function renderHealth() {
+  document.querySelectorAll(".sd-nav-item[data-id]").forEach((item) => {
+    const module = MODULES().find((entry) => entry.id === item.dataset.id);
+    const dot = module ? item.querySelector(".health") : null;
+
+    if (dot) {
+      dot.className = `health health--${state.health[module.id] || "unknown"}`;
+    }
+  });
+}
+
+async function probe(module) {
+  try {
+    const response = await fetch(`http://127.0.0.1:${module.web}${module.health}`, { cache: "no-store" });
+
+    state.health[module.id] = response.ok ? "up" : "down";
+  } catch (error) {
+    state.health[module.id] = "down";
+  }
+}
+
+async function probeAll() {
+  await Promise.all(MODULES().map(probe));
+  renderHealth();
+
+  const up = MODULES().filter((module) => state.health[module.id] === "up").length;
+  const indicator = document.getElementById("health-indicator");
+
+  indicator.className = `health health--${up === MODULES().length ? "up" : up > 0 ? "unknown" : "down"}`;
+  document.getElementById("health-summary").textContent = summary();
+}
+
+function summary() {
+  const up = MODULES().filter((module) => state.health[module.id] === "up").length;
+
+  return `${up} из ${MODULES().length} модулей на связи`;
+}
+
+async function loadModules() {
+  if (window.SD_MODULES && window.SD_MODULES.length) {
+    return window.SD_MODULES;
+  }
+
+  const response = await fetch("../modules.json");
+
+  return response.json();
+}
+
+async function start() {
+  state.modules = await loadModules();
+
+  buildSidebar();
+  buildOverview();
+  selectModule("overview");
+  await probeAll();
 }
 
 window.selectModule = selectModule;
+window.refreshHealth = probeAll;
 
-buildSidebar();
-buildOverview();
-selectModule("overview");
+start().catch((error) => {
+  document.getElementById("module-subtitle").textContent = `Не удалось загрузить модули: ${error.message}`;
+});

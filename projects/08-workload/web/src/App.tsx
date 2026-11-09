@@ -19,6 +19,8 @@ import {
 } from "@sd/ui";
 import { api, type Advice, type Operator, type WorkloadStats } from "./api";
 
+const EMBEDDED = new URLSearchParams(window.location.search).get("embed") === "1";
+
 const NAV = [
   { id: "team", label: "Команда" },
   { id: "teams", label: "По группам" },
@@ -69,6 +71,7 @@ export function App() {
 
   return (
     <AppShell
+      embedded={EMBEDDED}
       brand="Workload"
       subtitle="Нагрузка команды"
       nav={NAV}

@@ -4,63 +4,79 @@
     "folder": "01-helpdesk",
     "title": "Helpdesk",
     "subtitle": "Очередь обращений, AI-триаж и черновики ответов",
+    "icon": "helpdesk",
     "api": 8001,
-    "web": 5174
+    "web": 5174,
+    "health": "/api/tickets/stats"
   },
   {
     "id": "02",
     "folder": "02-inbox",
     "title": "Inbox",
     "subtitle": "Telegram, WhatsApp, email и чат в одной ленте",
+    "icon": "inbox",
     "api": 8002,
-    "web": 5175
+    "web": 5175,
+    "health": "/api/messages/stats"
   },
   {
     "id": "03",
     "folder": "03-sla",
     "title": "SLA",
     "subtitle": "Контроль сроков и прогноз просрочки",
+    "icon": "sla",
     "api": 8003,
-    "web": 5176
+    "web": 5176,
+    "health": "/api/slas/stats"
   },
   {
     "id": "04",
     "folder": "04-knowledge",
     "title": "Knowledge",
     "subtitle": "База знаний с AI-поиском по запросу клиента",
+    "icon": "knowledge",
     "api": 8004,
-    "web": 5177
+    "web": 5177,
+    "health": "/api/articles/stats"
   },
   {
     "id": "05",
     "folder": "05-suggest",
     "title": "Suggest",
     "subtitle": "Генератор черновиков ответов по тону",
+    "icon": "suggest",
     "api": 8005,
-    "web": 5178
+    "web": 5178,
+    "health": "/api/drafts/stats"
   },
   {
     "id": "06",
     "folder": "06-csat",
     "title": "CSAT",
     "subtitle": "Удовлетворённость клиентов и разбор отзывов",
+    "icon": "csat",
     "api": 8006,
-    "web": 5179
+    "web": 5179,
+    "health": "/api/surveys/stats"
   },
   {
     "id": "07",
     "folder": "07-portal",
     "title": "Portal",
     "subtitle": "Кабинет клиента и маршрутизация заявок",
+    "icon": "portal",
     "api": 8007,
-    "web": 5180
+    "web": 5180,
+    "health": "/api/requests/stats"
   },
   {
     "id": "08",
     "folder": "08-workload",
     "title": "Workload",
     "subtitle": "Нагрузка операторов и совет по перераспределению",
+    "icon": "workload",
     "api": 8008,
-    "web": 5181
+    "web": 5181,
+    "health": "/api/operators/stats"
   }
 ]

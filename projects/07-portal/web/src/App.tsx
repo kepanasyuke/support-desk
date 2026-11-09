@@ -20,6 +20,8 @@ import {
 } from "@sd/ui";
 import { api, type ClientRequest, type PortalStats, type Routing } from "./api";
 
+const EMBEDDED = new URLSearchParams(window.location.search).get("embed") === "1";
+
 const NAV = [
   { id: "requests", label: "Мои заявки" },
   { id: "new", label: "Новая заявка" },
@@ -86,6 +88,7 @@ export function App() {
 
   return (
     <AppShell
+      embedded={EMBEDDED}
       brand="Portal"
       subtitle="Кабинет клиента"
       nav={NAV}
