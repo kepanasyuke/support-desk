@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; frame-src http://127.0.0.1:*; script-src 'self'" />
+    <title>Support Desk</title>
+    <link rel="stylesheet" href="../../shared/ui/styles.css" />
+    <link rel="stylesheet" href="shell.css" />
+  </head>
+  <body>
+    <div class="sd-app">
+      <aside class="sd-sidebar">
+        <div class="sd-brand">
+          <div class="sd-brand__mark">S</div>
+          <div>
+            <div class="sd-brand__name">Support Desk</div>
+            <div class="sd-brand__sub">клиентская поддержка</div>
+          </div>
+        </div>
+        <nav class="sd-stack" id="nav" style="gap: 2px"></nav>
+        <div class="sidebar-foot">
+          <span class="sidebar-foot__dot"></span>
+          <span>8 модулей · Yii2 + React</span>
+        </div>
+      </aside>
+
+      <div class="sd-main">
+        <header class="sd-topbar">
+          <div>
+            <div class="topbar-title" id="module-title">Обзор</div>
+            <div class="topbar-subtitle" id="module-subtitle">Восемь модулей клиентской поддержки в одном окне</div>
+          </div>
+          <div class="topbar-badge">desktop</div>
+        </header>
+
+        <main class="workspace">
+          <section class="overview" id="overview">
+            <div class="overview-head">
+              <h1 class="overview-title">Рабочее пространство оператора</h1>
+              <p class="overview-desc">
+                Восемь приложений на одном бэкенде: PHP 8.3 и Yii2 REST отдают данные, React 18 показывает интерфейс.
+                Выберите раздел слева или карточку ниже.
+              </p>
+            </div>
+            <div class="overview-grid" id="overview-grid"></div>
+          </section>
+          <iframe id="frame" class="frame" title="Модуль" hidden></iframe>
+        </main>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<ruleset name="SD">
+    <description>Правила проекта: один выход из функции, короткие функции, запрет while/break/continue.</description>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="p"/>
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/web/assets/*</exclude-pattern>
+    <exclude-pattern>*/runtime/*</exclude-pattern>
+
+    <rule ref="Generic.PHP.Syntax"/>
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="140"/>
+        </properties>
+        <exclude-pattern>*/seed.php</exclude-pattern>
+        <exclude-pattern>*/config/web.php</exclude-pattern>
+        <exclude-pattern>*/web/index.php</exclude-pattern>
+    </rule>
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+    <rule ref="PSR12">
+        <exclude name="PSR1.Files.SideEffects"/>
+    </rule>
+
+    <rule ref="SD.Functions.SingleReturn"/>
+    <rule ref="SD.ControlStructures.NoForbiddenSyntax"/>
+    <rule ref="SD.Functions.MaxStatements">
+        <properties>
+            <property name="max" value="2"/>
+        </properties>
+    </rule>
+</ruleset>

@@ -1,0 +1,27 @@
+{
+  "name": "support-desk-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Восемь бизнес-приложений клиентской поддержки: PHP 8 / Yii2 + React 18 + AI",
+  "workspaces": [
+    "shared/ui",
+    "projects/*/web"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "lint:php": "phpcs",
+    "build": "node scripts/build-all.mjs",
+    "desktop": "electron desktop/main.js",
+    "dev:helpdesk": "npm run dev --workspace sd-helpdesk-web"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@typescript-eslint/parser": "^8.18.0",
+    "electron": "^45.2.3",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2"
+  }
+}

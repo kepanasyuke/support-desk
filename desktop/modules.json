@@ -1,0 +1,66 @@
+[
+  {
+    "id": "01",
+    "folder": "01-helpdesk",
+    "title": "Helpdesk",
+    "subtitle": "Очередь обращений, AI-триаж и черновики ответов",
+    "api": 8001,
+    "web": 5174
+  },
+  {
+    "id": "02",
+    "folder": "02-inbox",
+    "title": "Inbox",
+    "subtitle": "Telegram, WhatsApp, email и чат в одной ленте",
+    "api": 8002,
+    "web": 5175
+  },
+  {
+    "id": "03",
+    "folder": "03-sla",
+    "title": "SLA",
+    "subtitle": "Контроль сроков и прогноз просрочки",
+    "api": 8003,
+    "web": 5176
+  },
+  {
+    "id": "04",
+    "folder": "04-knowledge",
+    "title": "Knowledge",
+    "subtitle": "База знаний с AI-поиском по запросу клиента",
+    "api": 8004,
+    "web": 5177
+  },
+  {
+    "id": "05",
+    "folder": "05-suggest",
+    "title": "Suggest",
+    "subtitle": "Генератор черновиков ответов по тону",
+    "api": 8005,
+    "web": 5178
+  },
+  {
+    "id": "06",
+    "folder": "06-csat",
+    "title": "CSAT",
+    "subtitle": "Удовлетворённость клиентов и разбор отзывов",
+    "api": 8006,
+    "web": 5179
+  },
+  {
+    "id": "07",
+    "folder": "07-portal",
+    "title": "Portal",
+    "subtitle": "Кабинет клиента и маршрутизация заявок",
+    "api": 8007,
+    "web": 5180
+  },
+  {
+    "id": "08",
+    "folder": "08-workload",
+    "title": "Workload",
+    "subtitle": "Нагрузка операторов и совет по перераспределению",
+    "api": 8008,
+    "web": 5181
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "name": "support-desk/portfolio",
+  "description": "Восемь бизнес-приложений клиентской поддержки: Yii2 + React 18 + AI",
+  "type": "project",
+  "license": "MIT",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "yiisoft/yii2": "^2.0.53",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.11"
+  },
+  "autoload": {
+    "psr-4": {
+      "sd\\platform\\": "shared/php/",
+      "app\\helpdesk\\": "projects/01-helpdesk/api/src/",
+      "app\\inbox\\": "projects/02-inbox/api/src/",
+      "app\\sla\\": "projects/03-sla/api/src/",
+      "app\\kb\\": "projects/04-knowledge/api/src/",
+      "app\\suggest\\": "projects/05-suggest/api/src/",
+      "app\\csat\\": "projects/06-csat/api/src/",
+      "app\\portal\\": "projects/07-portal/api/src/",
+      "app\\workload\\": "projects/08-workload/api/src/"
+    }
+  },
+  "config": {
+    "vendor-dir": "vendor",
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true
+    }
+  },
+  "scripts": {
+    "lint": "phpcs --standard=shared/lint/phpcs/SD/ruleset.xml",
+    "lint:fix": "phpcbf --standard=shared/lint/phpcs/SD/ruleset.xml"
+  }
+}

@@ -1,0 +1,21 @@
+# Зависимости
+node_modules/
+vendor/
+
+# Собранные артефакты Electron
+desktop/out/
+
+# Базы и логи выполнения
+projects/*/api/runtime/
+*.log
+*.pid
+
+# Локальные настройки
+.env
+.env.*
+!.env.example
+
+# Служебное
+.DS_Store
+Thumbs.db
+*.bak
