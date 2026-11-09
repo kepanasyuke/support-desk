@@ -75,6 +75,10 @@ body {
   -webkit-app-region: no-drag;
 }
 
+.splash__actions[hidden] {
+  display: none;
+}
+
 .splash__button {
   height: 32px;
   padding: 0 16px;

@@ -24,6 +24,7 @@ const DEFAULT_BOUNDS = { width: 1440, height: 920 };
 
 let mainWindow = null;
 let splashWindow = null;
+let splashStartedAt = 0;
 
 app.setName("Support Desk");
 app.disableHardwareAcceleration();
@@ -297,8 +298,20 @@ function createSplash() {
 
   splashWindow = window;
   window.loadFile(path.join(here, "renderer", "splash.html"));
+  window.once("ready-to-show", () => {
+    splashStartedAt = Date.now();
+    window.show();
+  });
 
   return window;
+}
+
+async function holdSplash(minMs = 900) {
+  const left = splashStartedAt ? minMs - (Date.now() - splashStartedAt) : 0;
+
+  if (left > 0) {
+    await wait(left);
+  }
 }
 
 function closeSplash() {
@@ -403,6 +416,7 @@ function wireSplashIpc() {
     }
 
     pushSplash({ progress: 1, text: "Открываю окно…" });
+    await holdSplash();
     openMain();
   });
 
@@ -459,6 +473,7 @@ app.whenReady().then(async () => {
   }
 
   pushSplash({ progress: 1, text: "Открываю окно…" });
+  await holdSplash();
   openMain();
 });
 
