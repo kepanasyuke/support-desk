@@ -263,7 +263,7 @@ export function AppShell({
           </nav>
         </aside>
       )}
-      <div className="sd-main">
+      <div className="sd-main sd-canvas">
         {embedded ? (
           <header className="sd-topbar sd-topbar--embedded">
             <span className="sd-subtle" style={{ fontSize: 12 }}>{subtitle}</span>

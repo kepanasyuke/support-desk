@@ -76,4 +76,9 @@
   --sd-row-h: 44px;
   --sd-sidebar-w: 248px;
   --sd-topbar-h: 60px;
+
+  --sd-tint-primary: rgba(11, 92, 255, 0.1);
+  --sd-tint-accent: rgba(255, 107, 44, 0.08);
+  --sd-dot: rgba(15, 30, 53, 0.08);
+  --sd-dot-step: 18px;
 }

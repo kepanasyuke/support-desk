@@ -14,6 +14,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.sd-canvas {
+  background-color: var(--sd-bg);
+  background-image:
+    radial-gradient(820px 380px at 88% -6%, var(--sd-tint-primary), transparent 70%),
+    radial-gradient(680px 340px at 2% 106%, var(--sd-tint-accent), transparent 68%),
+    radial-gradient(var(--sd-dot) 1px, transparent 1.1px);
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size: auto, auto, var(--sd-dot-step) var(--sd-dot-step);
+}
+
 button,
 input,
 select,
