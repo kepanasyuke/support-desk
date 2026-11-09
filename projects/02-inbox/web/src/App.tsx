@@ -15,6 +15,7 @@ import {
   Spinner,
   Stat,
   Table,
+  channelLabel,
 } from "@sd/ui";
 import { api, type InboxStats, type Intent, type Message } from "./api";
 
@@ -107,7 +108,7 @@ export function App() {
         <>
           <PageHead
             title="Единый инбокс"
-            description="Telegram, WhatsApp, email, VK и чат на сайте в одной ленте"
+            description="Telegram, WhatsApp, почта, VK и чат на сайте в одной ленте"
             actions={busy ? <Spinner /> : <Badge tone="neutral">{visible.length} сообщений</Badge>}
           />
           <div className="sd-grid">
@@ -123,7 +124,7 @@ export function App() {
                 <Select value={channel} onChange={(event) => setChannel(event.target.value)}>
                   <option value="all">Все каналы</option>
                   {CHANNELS.map((item) => (
-                    <option key={item} value={item}>{item}</option>
+                    <option key={item} value={item}>{channelLabel(item)}</option>
                   ))}
                 </Select>
               }
@@ -132,7 +133,7 @@ export function App() {
               <Table head={["Канал", "Автор", "Сообщение", "Статус", "Намерение"]}>
                 {visible.map((message) => (
                   <tr key={message.id} onClick={() => open(message)} style={{ cursor: "pointer" }}>
-                    <td><Badge tone={CHANNEL_TONE[message.channel] ?? "neutral"}>{message.channel}</Badge></td>
+                    <td><Badge tone={CHANNEL_TONE[message.channel] ?? "neutral"}>{channelLabel(message.channel)}</Badge></td>
                     <td className="sd-strong">{message.author}</td>
                     <td className="sd-muted">{trim(message.text)}</td>
                     <td><Badge tone={STATUS_TONE[message.status]}>{STATUS_LABEL[message.status]}</Badge></td>
@@ -152,7 +153,7 @@ export function App() {
               />
               <CardBody className="sd-stack">
                 <div className="sd-row sd-muted">
-                  <Badge tone={CHANNEL_TONE[selected.channel] ?? "neutral"}>{selected.channel}</Badge>
+                  <Badge tone={CHANNEL_TONE[selected.channel] ?? "neutral"}>{channelLabel(selected.channel)}</Badge>
                   <span>{selected.created_at}</span>
                 </div>
                 <p style={{ margin: 0 }}>{selected.text}</p>
@@ -194,7 +195,7 @@ export function App() {
                 {(stats?.by_channel ?? []).map((row) => (
                   <div key={row.label} className="sd-stack" style={{ gap: 6 }}>
                     <div className="sd-row sd-row--between">
-                      <Badge tone={CHANNEL_TONE[row.label] ?? "neutral"}>{row.label}</Badge>
+                      <Badge tone={CHANNEL_TONE[row.label] ?? "neutral"}>{channelLabel(row.label)}</Badge>
                       <span className="sd-num">{row.total}</span>
                     </div>
                     <Score value={share(row.total, stats?.total ?? 0)} />

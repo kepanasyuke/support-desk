@@ -17,6 +17,7 @@ import {
   Stat,
   Table,
   Textarea,
+  channelLabel,
 } from "@sd/ui";
 import { api, type Stats, type Suggest, type Ticket, type Triage } from "./api";
 
@@ -140,7 +141,7 @@ export function App() {
                   <tr key={ticket.id} onClick={() => openTicket(ticket)} style={{ cursor: "pointer" }}>
                     <td className="sd-strong">{ticket.subject}</td>
                     <td>{ticket.client}</td>
-                    <td className="sd-muted">{ticket.channel}</td>
+                    <td className="sd-muted">{channelLabel(ticket.channel)}</td>
                     <td><Badge tone={STATUS_TONE[ticket.status]}>{STATUS_LABEL[ticket.status]}</Badge></td>
                     <td><Badge tone={PRIORITY_TONE[ticket.priority]}>{PRIORITY_LABEL[ticket.priority]}</Badge></td>
                     <td className="sd-muted">{ticket.ai_label ?? "—"}</td>
@@ -201,7 +202,7 @@ function TicketDetail(props: {
         <div className="sd-row sd-muted">
           <span>{props.ticket.client}</span>
           <span>•</span>
-          <span>{props.ticket.channel}</span>
+                  <span>{channelLabel(props.ticket.channel)}</span>
           <span>•</span>
           <span>{props.ticket.created_at}</span>
         </div>

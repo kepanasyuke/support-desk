@@ -56,7 +56,6 @@
             <button class="topbar-button" id="refresh" type="button" title="Проверить связь с модулями">
               Обновить
             </button>
-            <span class="topbar-badge">desktop</span>
           </div>
         </header>
 
@@ -69,7 +68,56 @@
                 Выберите раздел слева или карточку ниже.
               </p>
             </div>
+            <div class="overview-facts">
+              <span class="fact"><b>8</b> модулей</span>
+              <span class="fact"><b>8</b> PHP-сервисов</span>
+              <span class="fact"><b>2</b> провайдера AI</span>
+              <span class="fact"><b>0</b> ошибок линтера</span>
+            </div>
             <div class="overview-grid" id="overview-grid"></div>
+
+            <section class="overview-notes">
+              <article class="note-card">
+                <h2 class="note-title">Что под капотом</h2>
+                <ul class="note-list">
+                  <li><span class="note-key">Бэкенд</span><span>PHP 8.3 и Yii2 REST, восемь независимых сервисов</span></li>
+                  <li><span class="note-key">Фронтенд</span><span>React 18, TypeScript, Vite, общий кит @sd/ui</span></li>
+                  <li><span class="note-key">Данные</span><span>SQLite из коробки, PostgreSQL через DSN</span></li>
+                  <li><span class="note-key">AI</span><span>офлайн-эвристика без ключа, OpenAI при SD_AI_API_KEY</span></li>
+                  <li><span class="note-key">Окно</span><span>Electron 45, процессы PHP и прокси поднимаются сами</span></li>
+                </ul>
+              </article>
+
+              <article class="note-card">
+                <h2 class="note-title">Путь обращения</h2>
+                <ol class="note-steps">
+                  <li><b>Приходит</b> в Inbox из Telegram, WhatsApp, почты, VK или чата.</li>
+                  <li><b>Размечается</b> моделью: намерение, тема, приоритет.</li>
+                  <li><b>Встаёт</b> в очередь Helpdesk, SLA следит за сроком ответа.</li>
+                  <li><b>Закрывается</b> черновиком из Suggest, отзыв уходит в CSAT.</li>
+                  <li><b>Считается</b> в Workload и Portal: нагрузка и маршрутизация.</li>
+                </ol>
+              </article>
+
+              <article class="note-card">
+                <h2 class="note-title">Что проверено</h2>
+                <ul class="note-list">
+                  <li><span class="note-key">Линтер</span><span>свои правила: один выход, функции в 1–2 строки, без while</span></li>
+                  <li><span class="note-key">Сборка</span><span>tsc --noEmit и vite build по всем восьми проектам</span></li>
+                  <li><span class="note-key">Связь</span><span>health-точка у каждого модуля, статус виден в списке слева</span></li>
+                  <li><span class="note-key">Кадры</span><span>девять скриншотов Playwright для README</span></li>
+                </ul>
+              </article>
+            </section>
+
+            <section class="overview-start">
+              <h2 class="note-title">Запуск</h2>
+              <div class="start-commands">
+                <span><code>npm run desktop</code> окно со всеми модулями</span>
+                <span><code>npm run lint</code> ESLint, <code>lint:php</code> PHPCS</span>
+                <span><code>npm run shots</code> скриншоты для README</span>
+              </div>
+            </section>
           </section>
           <iframe id="frame" class="frame" title="Модуль" hidden></iframe>
         </main>

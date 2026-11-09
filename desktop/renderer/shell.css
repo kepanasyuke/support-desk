@@ -97,18 +97,6 @@ body {
   background: var(--sd-surface-alt);
 }
 
-.topbar-badge {
-  height: 24px;
-  padding: 0 var(--sd-space-3);
-  display: inline-flex;
-  align-items: center;
-  border-radius: var(--sd-radius-pill);
-  background: var(--sd-primary-soft);
-  color: var(--sd-primary);
-  font-size: var(--sd-fs-12);
-  font-weight: 500;
-}
-
 .workspace {
   flex: 1;
   min-height: 0;
@@ -225,4 +213,106 @@ body {
   font-size: var(--sd-fs-12);
   font-weight: 500;
   color: var(--sd-primary);
+}
+
+.overview-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sd-space-2);
+}
+
+.fact {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px var(--sd-space-3);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-pill);
+  background: var(--sd-surface);
+  font-size: var(--sd-fs-12);
+  color: var(--sd-text-muted);
+}
+
+.fact b {
+  font-size: var(--sd-fs-14);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--sd-text);
+}
+
+.overview-notes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sd-space-4);
+}
+
+.note-card,
+.overview-start {
+  padding: var(--sd-space-5) var(--sd-space-6);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  background: var(--sd-surface);
+}
+
+.note-title {
+  margin: 0 0 var(--sd-space-3);
+  font-size: var(--sd-fs-14);
+  font-weight: 600;
+  letter-spacing: var(--sd-tracking-tight);
+}
+
+.note-list,
+.note-steps {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sd-space-3);
+  font-size: var(--sd-fs-13);
+  color: var(--sd-text-muted);
+  line-height: var(--sd-lh-base);
+}
+
+.note-list {
+  list-style: none;
+}
+
+.note-list li {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: var(--sd-space-3);
+}
+
+.note-steps {
+  padding-left: var(--sd-space-5);
+}
+
+.note-key,
+.note-steps b {
+  font-weight: 500;
+  color: var(--sd-text);
+}
+
+.start-commands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sd-space-3) var(--sd-space-5);
+  font-size: var(--sd-fs-13);
+  color: var(--sd-text-muted);
+}
+
+.start-commands code {
+  margin-right: var(--sd-space-1);
+  padding: 2px var(--sd-space-2);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-sm);
+  background: var(--sd-surface-alt);
+  font-family: var(--sd-font-mono);
+  font-size: var(--sd-fs-12);
+  color: var(--sd-text);
+}
+
+@media (max-width: 1180px) {
+  .overview-notes {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
