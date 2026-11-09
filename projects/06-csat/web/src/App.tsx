@@ -15,6 +15,8 @@ import {
   Spinner,
   Stat,
   Table,
+  Tip,
+  CsatArt,
 } from "@sd/ui";
 import { api, type CsatStats, type Sentiment, type Survey } from "./api";
 
@@ -149,9 +151,18 @@ export function App() {
                 ))}
               </Table>
             ) : (
-              <Empty title="Отзывов нет" description="Запустите php projects/06-csat/api/seed.php" />
+              <Empty
+                art={<CsatArt />}
+                title="Отзывов нет"
+                description="Запустите php projects/06-csat/api/seed.php"
+              />
             )}
           </Card>
+          <Tip
+            art={<CsatArt />}
+            title="Откуда берутся метки"
+            text="Оценка 1–5 задаёт базу, комментарий уточняет: смешанный отзыв уходит в нейтральные, резкий — в недовольные. Дальше система подсказывает, просить публичный отзыв или звонить клиенту."
+          />
           {selected ? (
             <AiPanel title={`Разбор отзыва: ${selected.client}`} action={<Badge tone="primary">{selected.score} / 5</Badge>}>
               {sentiment ? (

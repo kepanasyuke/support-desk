@@ -16,6 +16,8 @@ import {
   Spinner,
   Stat,
   Table,
+  Tip,
+  SlaArt,
 } from "@sd/ui";
 import { api, type Risk, type SlaItem, type SlaStats } from "./api";
 
@@ -163,9 +165,18 @@ export function App() {
                 ))}
               </Table>
             ) : (
-              <Empty title="Записей нет" description="Запустите php projects/03-sla/api/seed.php" />
+              <Empty
+                art={<SlaArt />}
+                title="Записей нет"
+                description="Запустите php projects/03-sla/api/seed.php"
+              />
             )}
           </Card>
+          <Tip
+            art={<SlaArt />}
+            title="Как считается риск"
+            text="Модель смотрит на остаток времени до дедлайна, приоритет и историю ответов. Высокий риск подсвечивается красным, а полоса показывает, сколько лимита уже израсходовано."
+          />
           {selected ? (
             <Card>
               <CardHead

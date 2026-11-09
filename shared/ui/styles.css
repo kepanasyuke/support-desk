@@ -474,6 +474,54 @@ textarea {
   margin-bottom: var(--sd-space-1);
 }
 
+.sd-empty__art {
+  width: 148px;
+  margin: 0 auto var(--sd-space-4);
+  color: var(--sd-text-subtle);
+}
+
+.sd-empty__art svg {
+  display: block;
+  width: 148px;
+  height: auto;
+}
+
+.sd-tip {
+  display: flex;
+  align-items: center;
+  gap: var(--sd-space-5);
+  padding: var(--sd-space-5) var(--sd-space-6);
+  border: 1px dashed var(--sd-border-strong);
+  border-radius: var(--sd-radius-lg);
+  background: var(--sd-surface);
+  color: var(--sd-text-muted);
+}
+
+.sd-tip__art {
+  flex: 0 0 auto;
+  width: 84px;
+  color: var(--sd-text-subtle);
+}
+
+.sd-tip__art svg {
+  display: block;
+  width: 84px;
+  height: auto;
+}
+
+.sd-tip__title {
+  margin-bottom: var(--sd-space-1);
+  font-size: var(--sd-fs-14);
+  font-weight: 600;
+  color: var(--sd-text);
+}
+
+.sd-tip__text {
+  max-width: 620px;
+  font-size: var(--sd-fs-13);
+  line-height: var(--sd-lh-base);
+}
+
 .sd-spinner {
   width: 18px;
   height: 18px;

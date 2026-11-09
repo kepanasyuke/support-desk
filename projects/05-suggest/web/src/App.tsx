@@ -18,6 +18,8 @@ import {
   Stat,
   Table,
   Textarea,
+  Tip,
+  SuggestArt,
 } from "@sd/ui";
 import { api, type Draft, type DraftStats, type Generated } from "./api";
 
@@ -130,6 +132,11 @@ export function App() {
               </div>
             </AiPanel>
           ) : null}
+          <Tip
+            art={<SuggestArt />}
+            title="Что учитывает черновик"
+            text="Тема обращения, имя клиента и выбранный тон: деловой, дружелюбный или короткий. Текст можно перегенерировать или принять и отредактировать вручную."
+          />
         </>
       ) : null}
 
@@ -160,7 +167,11 @@ export function App() {
                 ))}
               </Table>
             ) : (
-              <Empty title="Черновиков нет" description="Запустите php projects/05-suggest/api/seed.php" />
+              <Empty
+                art={<SuggestArt />}
+                title="Черновиков нет"
+                description="Запустите php projects/05-suggest/api/seed.php"
+              />
             )}
           </Card>
         </>

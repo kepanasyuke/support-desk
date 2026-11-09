@@ -16,6 +16,8 @@ import {
   Spinner,
   Stat,
   Table,
+  Tip,
+  WorkloadArt,
 } from "@sd/ui";
 import { api, type Advice, type Operator, type WorkloadStats } from "./api";
 
@@ -120,9 +122,18 @@ export function App() {
                 ))}
               </Table>
             ) : (
-              <Empty title="Операторов нет" description="Запустите php projects/08-workload/api/seed.php" />
+              <Empty
+                art={<WorkloadArt />}
+                title="Операторов нет"
+                description="Запустите php projects/08-workload/api/seed.php"
+              />
             )}
           </Card>
+          <Tip
+            art={<WorkloadArt />}
+            title="Как считается загрузка"
+            text="Открытые обращения относятся к ёмкости смены: до 60% — свободно, 90% и выше — перегруз. Совет предлагает, у кого снять часть очереди и кому добавить."
+          />
           {selected ? (
             <AiPanel
               title={`AI-совет: ${selected.name}`}
@@ -165,7 +176,11 @@ export function App() {
                   </div>
                 ))
               ) : (
-                <Empty title="Данных нет" description="Запустите php projects/08-workload/api/seed.php" />
+                <Empty
+                art={<WorkloadArt />}
+                title="Данных нет"
+                description="Запустите php projects/08-workload/api/seed.php"
+              />
               )}
             </CardBody>
           </Card>

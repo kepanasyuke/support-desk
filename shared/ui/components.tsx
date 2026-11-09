@@ -127,12 +127,25 @@ export function Score({ value }: { value: number }) {
   );
 }
 
-export function Empty({ title, description, action }: { title: string; description?: string; action?: React.ReactNode }) {
+export function Empty({ title, description, action, art }: { title: string; description?: string; action?: React.ReactNode; art?: React.ReactNode }) {
   return (
     <div className="sd-empty">
+      {art ? <div className="sd-empty__art">{art}</div> : null}
       <div className="sd-empty__title">{title}</div>
       {description ? <div>{description}</div> : null}
       {action ? <div style={{ marginTop: 16 }}>{action}</div> : null}
+    </div>
+  );
+}
+
+export function Tip({ art, title, text }: { art?: React.ReactNode; title: string; text: string }) {
+  return (
+    <div className="sd-tip">
+      {art ? <div className="sd-tip__art">{art}</div> : null}
+      <div>
+        <div className="sd-tip__title">{title}</div>
+        <div className="sd-tip__text">{text}</div>
+      </div>
     </div>
   );
 }

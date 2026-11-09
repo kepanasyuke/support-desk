@@ -17,6 +17,8 @@ import {
   Stat,
   Table,
   Textarea,
+  Tip,
+  PortalArt,
 } from "@sd/ui";
 import { api, type ClientRequest, type PortalStats, type Routing } from "./api";
 
@@ -126,9 +128,18 @@ export function App() {
                 ))}
               </Table>
             ) : (
-              <Empty title="Заявок нет" description="Запустите php projects/07-portal/api/seed.php" />
+              <Empty
+                art={<PortalArt />}
+                title="Заявок нет"
+                description="Запустите php projects/07-portal/api/seed.php"
+              />
             )}
           </Card>
+          <Tip
+            art={<PortalArt />}
+            title="Как работает маршрутизация"
+            text="Заявка размечается по категории и уходит в профильную группу: биллинг, техподдержка, логистика. Повторные обращения одного клиента видно рядом, чтобы не отвечать дважды."
+          />
           {selected ? (
             <AiPanel title={`Маршрутизация: ${selected.subject}`} action={<Badge tone="primary">{selected.status}</Badge>}>
               {routing ? (
@@ -207,7 +218,11 @@ export function App() {
                     </div>
                   ))
                 ) : (
-                  <Empty title="Категорий пока нет" description="Отправьте заявку или нажмите на существующую" />
+                  <Empty
+                art={<PortalArt />}
+                title="Категорий пока нет"
+                description="Отправьте заявку или нажмите на существующую"
+              />
                 )}
               </CardBody>
             </Card>

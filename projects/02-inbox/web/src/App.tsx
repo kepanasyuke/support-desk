@@ -15,6 +15,8 @@ import {
   Spinner,
   Stat,
   Table,
+  Tip,
+  InboxArt,
   channelLabel,
 } from "@sd/ui";
 import { api, type InboxStats, type Intent, type Message } from "./api";
@@ -142,9 +144,18 @@ export function App() {
                 ))}
               </Table>
             ) : (
-              <Empty title="Сообщений нет" description="Запустите php projects/02-inbox/api/seed.php" />
+              <Empty
+                art={<InboxArt />}
+                title="Сообщений нет"
+                description="Запустите php projects/02-inbox/api/seed.php"
+              />
             )}
           </Card>
+          <Tip
+            art={<InboxArt />}
+            title="Зачем одна лента"
+            text="Сообщения из пяти каналов лежат в одной таблице: претензия из Telegram и вопрос из почты видны рядом, а намерение позволяет сразу отличить жалобу от заказа."
+          />
           {selected ? (
             <Card>
               <CardHead
@@ -214,7 +225,11 @@ export function App() {
                     </div>
                   ))
                 ) : (
-                  <Empty title="Разметки пока нет" description="Нажмите «Определить намерение» в ленте" />
+                    <Empty
+                      art={<InboxArt />}
+                      title="Разметки пока нет"
+                      description="Нажмите «Определить намерение» в ленте"
+                    />
                 )}
               </CardBody>
             </Card>

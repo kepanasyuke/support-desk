@@ -17,6 +17,8 @@ import {
   Stat,
   Table,
   Textarea,
+  Tip,
+  HelpdeskArt,
   channelLabel,
 } from "@sd/ui";
 import { api, type Stats, type Suggest, type Ticket, type Triage } from "./api";
@@ -149,9 +151,18 @@ export function App() {
                 ))}
               </Table>
             ) : (
-              <Empty title="Обращений нет" description="Запустите php projects/01-helpdesk/api/seed.php" />
+              <Empty
+                art={<HelpdeskArt />}
+                title="Обращений нет"
+                description="Запустите php projects/01-helpdesk/api/seed.php"
+              />
             )}
           </Card>
+          <Tip
+            art={<HelpdeskArt />}
+            title="Что делает AI-триаж"
+            text="Модель читает тему и текст обращения, ставит метку темы и приоритет. Срочные поднимаются вверх очереди, уверенность видна в карточке обращения."
+          />
           {selected ? (
             <TicketDetail
               ticket={selected}

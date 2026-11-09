@@ -15,6 +15,8 @@ import {
   Spinner,
   Stat,
   Table,
+  Tip,
+  KnowledgeArt,
 } from "@sd/ui";
 import { api, type Article, type KbStats, type SearchResult } from "./api";
 
@@ -100,9 +102,18 @@ export function App() {
                 ))}
               </Table>
             ) : (
-              <Empty title="Статей нет" description="Запустите php projects/04-knowledge/api/seed.php" />
+              <Empty
+                art={<KnowledgeArt />}
+                title="Статей нет"
+                description="Запустите php projects/04-knowledge/api/seed.php"
+              />
             )}
           </Card>
+          <Tip
+            art={<KnowledgeArt />}
+            title="Как ищет поиск"
+            text="Запрос клиента размечается по теме, а статьи подбираются по совпадению темы и ключевых слов, поэтому «не приходит счёт» находит статью про закрывающие документы."
+          />
         </>
       ) : null}
 
@@ -137,7 +148,11 @@ export function App() {
                     ))}
                   </Table>
                 ) : (
-                  <Empty title="Ничего не найдено" description="Переформулируйте запрос" />
+                  <Empty
+                    art={<KnowledgeArt />}
+                    title="Ничего не найдено"
+                    description="Переформулируйте запрос"
+                  />
                 )}
               </div>
             </AiPanel>
