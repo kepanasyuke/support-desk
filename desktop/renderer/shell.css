@@ -179,18 +179,6 @@ body {
   max-width: 620px;
 }
 
-.overview-head__hero {
-  flex: 0 0 auto;
-  width: 360px;
-  height: auto;
-}
-
-@media (max-width: 1280px) {
-  .overview-head__hero {
-    width: 280px;
-  }
-}
-
 .overview-title {
   margin: 0;
   font-size: var(--sd-fs-24);
