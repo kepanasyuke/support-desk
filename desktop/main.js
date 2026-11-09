@@ -2,6 +2,7 @@ import { app, BrowserWindow, Menu, dialog, ipcMain, shell } from "electron";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
+import net from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { startStatic } from "./server.js";
@@ -48,6 +49,7 @@ function startApi(module) {
     stdio: "ignore",
   });
 
+  child.on("exit", (code) => console.log(`API ${module.title} на ${module.api} остановился с кодом ${code}`));
   children.push(child);
 
   return child;
@@ -99,6 +101,32 @@ async function warmUp(attempts = 30) {
     console.log(`Прогрев ${attempt + 1}/${attempts}: ${results.map((ok, index) => `${MODULES[index].web}=${ok ? "ok" : "нет"}`).join(" ")}`);
 
     if (results.every(Boolean)) {
+      return true;
+    }
+
+    await wait(300);
+  }
+
+  return false;
+}
+
+function freePort(port) {
+  return new Promise((resolve) => {
+    const probe = net.createServer();
+
+    probe.once("error", () => resolve(false));
+    probe.once("listening", () => probe.close(() => resolve(true)));
+    probe.listen(port, "127.0.0.1");
+  });
+}
+
+async function waitForPorts(attempts = 20) {
+  const ports = MODULES.flatMap((module) => [module.api, module.web]);
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const states = await Promise.all(ports.map(freePort));
+
+    if (states.every(Boolean)) {
       return true;
     }
 
@@ -280,6 +308,10 @@ function shutdown() {
 }
 
 app.whenReady().then(async () => {
+  const portsFree = await waitForPorts();
+
+  console.log(portsFree ? "Порты свободны" : "Порты заняты: похоже, работает прошлый экземпляр");
+
   const count = bootstrap();
   console.log(`Support Desk: поднято ${count} модулей`);
 

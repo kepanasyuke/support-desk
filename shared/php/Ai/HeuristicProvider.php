@@ -8,6 +8,50 @@ final class HeuristicProvider implements ProviderInterface
 {
     private const STOP_WORDS = ['этот', 'эта', 'что', 'как', 'для', 'или', 'при', 'все', 'наш', 'ваш', 'они', 'она'];
 
+    private const TOKEN_WEIGHT = 0.35;
+
+    private const FEATURES = [
+        'оплата и счета' => [
+            'счёт', 'счет', 'оплат', 'платёж', 'платеж', 'инн', 'бухгалтер', 'квитанц', 'тариф', 'подписк',
+        ],
+        'техническая ошибка' => [
+            'ошибк', 'баг', 'выгрузк', 'не работает', 'не открывает', '500', 'зависа', 'тормоз', 'медленн',
+            'падает', 'сломал',
+        ],
+        'доставка и сроки' => ['доставк', 'курьер', 'заказ', 'задерж', 'трек', 'посылк', 'срок', 'привез'],
+        'доступ и пароли' => ['парол', 'вход', 'войти', 'логин', 'авторизац', 'блокировк', 'доступ', 'аккаунт'],
+        'возврат средств' => ['возврат', 'вернуть', 'деньг', 'списан', 'дубликат', 'компенсац', 'переплат'],
+        'претензия и жалоба' => [
+            'претензи', 'жалоб', 'недовол', 'возмущ', 'безобраз', 'обман', 'требую', 'хамств', 'верните',
+        ],
+        'техническая проблема' => [
+            'ошибк', 'баг', 'не работает', 'сломал', 'зависа', '500', 'падает', 'код подтверждения',
+        ],
+        'вопрос по заказу' => ['заказ', 'доставк', 'курьер', 'статус', 'трек', 'посылк', 'наличи', 'оформить'],
+        'спам и реклама' => ['реклам', 'рассылк', 'акци', 'скидк', 'предлага', 'продвижен', 'заработок'],
+        'благодарность' => ['спасибо', 'благодар', 'признател', 'выручил', 'огромное'],
+        'клиент доволен' => [
+            'спасибо', 'доволен', 'отлично', 'супер', 'быстро', 'удобно', 'нравится', 'благодар', 'оценка 4',
+            'оценка 5', 'оперативн', 'помогли', 'понятн', 'объяснили', 'решили', 'хорошо', 'в порядке', 'рекоменду',
+        ],
+        'клиент недоволен' => [
+            'ужас', 'плохо', 'недовол', 'долго', 'разочаров', 'верните', 'жалоб', 'кошмар', 'оценка 1',
+            'оценка 2', 'ужасн', 'не вернули', 'не закрыт', 'напоминать', 'шаблон', 'переспрашивать', 'дважды',
+            'трижды', 'отвратит', 'медленн',
+        ],
+        'нейтральный отзыв' => ['оценка 3', 'нейтральн', 'но пришлось', 'в порядке, но'],
+        'оплата и billing' => ['оплат', 'счет', 'счёт', 'платеж', 'платёж', 'тариф', 'подписк', 'биллинг'],
+        'технические ошибки' => ['ошибк', 'баг', 'не работает', '500', 'исключен'],
+        'доставка и логистика' => ['доставк', 'курьер', 'трек', 'посылк', 'склад'],
+        'доступ и безопасность' => ['парол', 'доступ', 'логин', 'авторизац', 'токен', '2fa'],
+        'интеграции и API' => ['api', 'интеграц', 'webhook', 'обмен', '1с', 'rest'],
+        'оплата и документы' => ['оплат', 'счёт', 'счет', 'документ', 'инн', 'акт', 'фактур'],
+        'техническая неисправность' => ['ошибк', 'не работает', 'сломал', '500', 'зависа'],
+        'доставка заказа' => ['доставк', 'курьер', 'заказ', 'трек'],
+        'доступ к аккаунту' => ['доступ', 'парол', 'вход', 'логин', 'аккаунт'],
+        'консультация' => ['консультац', 'подскаж', 'интересует', 'документац', 'вопрос'],
+    ];
+
     public function name(): string
     {
         return 'heuristic-offline';
@@ -63,7 +107,7 @@ final class HeuristicProvider implements ProviderInterface
 
     private function buildResult(string $text, array $labels): array
     {
-        return $this->resultFor($labels, $this->scores($labels, $this->tokens($text)));
+        return $this->resultFor($labels, $this->scores($labels, $text));
     }
 
     private function resultFor(array $labels, array $scores): array
@@ -98,19 +142,49 @@ final class HeuristicProvider implements ProviderInterface
         return mb_strlen($word) > 3 && !in_array($word, self::STOP_WORDS, true);
     }
 
-    private function scores(array $labels, array $tokens): array
+    private function scores(array $labels, string $text): array
     {
-        return array_map(fn (string $label): float => $this->overlap($label, $tokens), $labels);
+        return array_map(fn (string $label): float => $this->overlap($label, $text), $labels);
     }
 
-    private function overlap(string $label, array $tokens): float
+    private function overlap(string $label, string $text): float
     {
-        return $this->ratio(count(array_intersect($this->labelsTokens($label), $tokens)), max(count($tokens), 1));
+        return round(min(1.0, $this->featureScore($label, $text) + $this->tokenScore($label, $text)), 3);
     }
 
-    private function ratio(int $hits, int $base): float
+    private function featureScore(string $label, string $text): float
     {
-        return round(min(1.0, $hits / $base * 4), 3);
+        return $this->share($this->hits($label, $text), count($this->features($label)));
+    }
+
+    private function tokenScore(string $label, string $text): float
+    {
+        return $this->share($this->matched($label, $text), count($this->tokens($text))) * self::TOKEN_WEIGHT;
+    }
+
+    private function matched(string $label, string $text): int
+    {
+        return count(array_intersect($this->labelsTokens($label), $this->tokens($text)));
+    }
+
+    private function hits(string $label, string $text): int
+    {
+        return count(array_filter($this->features($label), fn (string $item): bool => $this->found($text, $item)));
+    }
+
+    private function found(string $text, string $feature): bool
+    {
+        return mb_stripos($text, $feature) !== false;
+    }
+
+    private function features(string $label): array
+    {
+        return self::FEATURES[$label] ?? [];
+    }
+
+    private function share(int $hits, int $total): float
+    {
+        return $total > 0 ? min(1.0, $hits / $total * 3) : 0.0;
     }
 
     private function labelsTokens(string $label): array
@@ -120,7 +194,17 @@ final class HeuristicProvider implements ProviderInterface
 
     private function winner(array $labels, array $scores): array
     {
+        return $this->bestScore($scores) > 0 ? $this->best($labels, $scores) : $this->noLabel();
+    }
+
+    private function best(array $labels, array $scores): array
+    {
         return ['label' => $labels[$this->bestIndex($scores)] ?? 'other', 'confidence' => $this->bestScore($scores)];
+    }
+
+    private function noLabel(): array
+    {
+        return ['label' => 'без метки', 'confidence' => 0.0];
     }
 
     private function bestScore(array $scores): float

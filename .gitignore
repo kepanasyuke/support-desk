@@ -6,7 +6,7 @@ vendor/
 desktop/out/
 
 # Локальные скриншоты из SD_SHOTS=1
-screenshots/
+/screenshots/
 
 # Базы и логи выполнения
 projects/*/api/runtime/
