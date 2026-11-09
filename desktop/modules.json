@@ -5,7 +5,7 @@
     "title": "Helpdesk",
     "subtitle": "Очередь обращений, AI-триаж и черновики ответов",
     "icon": "helpdesk",
-    "api": 8001,
+    "api": 8801,
     "web": 5174,
     "health": "/api/tickets/stats"
   },
@@ -15,7 +15,7 @@
     "title": "Inbox",
     "subtitle": "Telegram, WhatsApp, email и чат в одной ленте",
     "icon": "inbox",
-    "api": 8002,
+    "api": 8802,
     "web": 5175,
     "health": "/api/messages/stats"
   },
@@ -25,7 +25,7 @@
     "title": "SLA",
     "subtitle": "Контроль сроков и прогноз просрочки",
     "icon": "sla",
-    "api": 8003,
+    "api": 8803,
     "web": 5176,
     "health": "/api/slas/stats"
   },
@@ -35,7 +35,7 @@
     "title": "Knowledge",
     "subtitle": "База знаний с AI-поиском по запросу клиента",
     "icon": "knowledge",
-    "api": 8004,
+    "api": 8804,
     "web": 5177,
     "health": "/api/articles/stats"
   },
@@ -45,7 +45,7 @@
     "title": "Suggest",
     "subtitle": "Генератор черновиков ответов по тону",
     "icon": "suggest",
-    "api": 8005,
+    "api": 8805,
     "web": 5178,
     "health": "/api/drafts/stats"
   },
@@ -55,7 +55,7 @@
     "title": "CSAT",
     "subtitle": "Удовлетворённость клиентов и разбор отзывов",
     "icon": "csat",
-    "api": 8006,
+    "api": 8806,
     "web": 5179,
     "health": "/api/surveys/stats"
   },
@@ -65,7 +65,7 @@
     "title": "Portal",
     "subtitle": "Кабинет клиента и маршрутизация заявок",
     "icon": "portal",
-    "api": 8007,
+    "api": 8807,
     "web": 5180,
     "health": "/api/requests/stats"
   },
@@ -75,7 +75,7 @@
     "title": "Workload",
     "subtitle": "Нагрузка операторов и совет по перераспределению",
     "icon": "workload",
-    "api": 8008,
+    "api": 8808,
     "web": 5181,
     "health": "/api/operators/stats"
   }

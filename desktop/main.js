@@ -120,20 +120,23 @@ function freePort(port) {
   });
 }
 
-async function waitForPorts(attempts = 20) {
+async function busyPorts(attempts = 20) {
   const ports = MODULES.flatMap((module) => [module.api, module.web]);
+  let busy = ports;
 
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     const states = await Promise.all(ports.map(freePort));
 
-    if (states.every(Boolean)) {
-      return true;
+    busy = ports.filter((port, index) => !states[index]);
+
+    if (busy.length === 0) {
+      return busy;
     }
 
     await wait(300);
   }
 
-  return false;
+  return busy;
 }
 
 function registerHealthChannel() {
@@ -308,9 +311,9 @@ function shutdown() {
 }
 
 app.whenReady().then(async () => {
-  const portsFree = await waitForPorts();
+  const busy = await busyPorts();
 
-  console.log(portsFree ? "Порты свободны" : "Порты заняты: похоже, работает прошлый экземпляр");
+  console.log(busy.length === 0 ? "Порты свободны" : `Заняты порты: ${busy.join(", ")} — эти модули не поднимутся`);
 
   const count = bootstrap();
   console.log(`Support Desk: поднято ${count} модулей`);

@@ -1,4 +1,5 @@
 import React from "react";
+import { Logo } from "./Logo";
 
 type Tone = "neutral" | "info" | "success" | "warning" | "danger" | "accent" | "primary";
 
@@ -220,7 +221,6 @@ export function AppShell({
   embedded?: boolean;
   children: React.ReactNode;
 }) {
-  const mark = brand.slice(0, 1).toUpperCase();
   const shellClass = embedded ? "sd-app sd-app--embedded" : "sd-app";
 
   return (
@@ -228,7 +228,9 @@ export function AppShell({
       {embedded ? null : (
         <aside className="sd-sidebar">
           <div className="sd-brand">
-            <div className="sd-brand__mark">{mark}</div>
+            <div className="sd-brand__mark">
+              <Logo size={20} />
+            </div>
             <div>
               <div className="sd-brand__name">{brand}</div>
               <div className="sd-brand__sub">{subtitle}</div>

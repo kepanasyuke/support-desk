@@ -15,6 +15,8 @@ const MIME = {
   ".woff2": "font/woff2",
 };
 
+const CORS = { "Access-Control-Allow-Origin": "*" };
+
 export function startStatic(rootDir, port, apiPort) {
   const server = http.createServer((request, response) => route(request, response, rootDir, apiPort));
   server.listen(port, "127.0.0.1");
@@ -33,6 +35,12 @@ function route(request, response, rootDir, apiPort) {
   serveFile(request, response, rootDir);
 }
 
+function withCors(headers) {
+  const rest = Object.entries(headers).filter(([name]) => name.toLowerCase() !== "access-control-allow-origin");
+
+  return { ...Object.fromEntries(rest), ...CORS };
+}
+
 function proxy(request, response, apiPort) {
   const options = {
     host: "127.0.0.1",
@@ -43,7 +51,7 @@ function proxy(request, response, apiPort) {
   };
 
   const upstream = http.request(options, (answer) => {
-    response.writeHead(answer.statusCode, answer.headers);
+    response.writeHead(answer.statusCode, withCors(answer.headers));
     answer.pipe(response);
   });
 
@@ -81,7 +89,7 @@ function reply(data, response, resolved, rootDir) {
 }
 
 function send(response, status, type, data) {
-  response.writeHead(status, { "Content-Type": type });
+  response.writeHead(status, { "Content-Type": type, ...CORS });
   response.end(data);
 }
 

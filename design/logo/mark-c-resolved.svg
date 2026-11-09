@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <mask id="sd-mark-cut">
+    <rect width="1024" height="1024" fill="#FFFFFF" />
+    <path
+      fill="none"
+      stroke="#000000"
+      stroke-width="84"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M390 476L472 558L648 364"
+    />
+  </mask>
+  <path
+    fill="currentColor"
+    mask="url(#sd-mark-cut)"
+    d="M342 232H682A150 150 0 0 1 832 382V542A150 150 0 0 1 682 692H500L342 832V692H342A150 150 0 0 1 192 542V382A150 150 0 0 1 342 232Z"
+  />
+</svg>
